@@ -1,0 +1,21 @@
+# Measurement output
+recordings/
+*.csv
+
+# CMake / build
+build/
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+CMakeUserPresets.json
+compile_commands.json
+protocol_client
+*.exe
+*.o
+*.obj
+
+# Secrets
+.env
+.env.*
+*.pem
+*.key

@@ -1,0 +1,29 @@
+def zeus_counter_exchange():
+  # Two sync() calls per iteration is the load-bearing detail. sync() consumes
+  # the remainder of this thread's 2 ms control frame, so two of them yield
+  # exactly one iteration per two frames = 250 Hz. Without sync(), incrementing
+  # a variable costs no "physical" time and the loop would iterate an unbounded,
+  # load-dependent number of times per frame.
+  #
+  # output_int_register_41 echoes back the Client Counter this iteration read,
+  # so registers 41 and 42 together are one consistent controller-side snapshot:
+  # no frame boundary can fall between the two writes, because this thread holds
+  # the frame until sync().
+  #
+  # Never read input_int_register_47: RTDEIOInterface claims it as its
+  # command-type field when using the upper register range.
+
+  script_counter = 0
+  input_value = read_input_integer_register(42)
+  write_output_integer_register(42, script_counter)
+  write_output_integer_register(41, input_value)
+  popup("Count Loop Started")
+  while True:
+    script_counter = script_counter + 1
+    input_value = read_input_integer_register(42)
+    write_output_integer_register(42, script_counter)
+    write_output_integer_register(41, input_value)
+    sync()
+    sync()
+  end
+end
